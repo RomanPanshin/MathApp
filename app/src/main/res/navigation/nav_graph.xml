@@ -1,0 +1,26 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mathBasicsFragment">
+
+    <fragment
+        android:id="@+id/mathBasicsFragment"
+        android:name="com.example.mathapp2.ui.theme.MathBasicsFragment"
+        android:label="fragment_math_basics">
+        <!-- Define actions if any -->
+    </fragment>
+
+    <fragment
+        android:id="@+id/algebraFragment"
+        android:name="com.example.mathapp2.ui.theme.AlgebraFragment"
+        android:label="fragment_algebra">
+        <!-- Define actions if any -->
+    </fragment>
+
+    <fragment
+        android:id="@+id/geometryFragment"
+        android:name="com.example.mathapp2.ui.theme.GeometryFragment"
+        android:label="fragment_geometry">
+        <!-- Define actions if any -->
+    </fragment>
+</navigation>
