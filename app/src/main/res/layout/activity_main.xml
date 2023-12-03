@@ -32,12 +32,42 @@
             android:text="Geometry" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/fetchDataButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonPanel"
+        android:layout_centerHorizontal="true"
+        android:text="Fetch Data" />
+
+    <Button
+        android:id="@+id/btnNavigateToDataDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fetchDataButton"
+        android:layout_centerHorizontal="true"
+        android:text="Show Data" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mathProblemsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/btnNavigateToDataDisplay" />
+
+
     <fragment
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/buttonPanel"
         app:navGraph="@navigation/nav_graph"
         app:defaultNavHost="true" />
+
+    <Button
+        android:id="@+id/btnNavigateToImageDownload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nav_host_fragment"
+        android:text="Download Image" />
+
 </RelativeLayout>

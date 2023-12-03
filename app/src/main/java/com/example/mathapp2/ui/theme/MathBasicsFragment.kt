@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.example.mathapp2.R
 
 class MathBasicsFragment : Fragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -16,3 +17,4 @@ class MathBasicsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_math_basics, container, false)
     }
 }
+

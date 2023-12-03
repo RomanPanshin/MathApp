@@ -7,4 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.mathapp2.R
 
-class AlgebraFragment : Fragment(R.layout.fragment_algebra){}
+class AlgebraFragment : Fragment() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_algebra, container, false)
+    }
+}
+

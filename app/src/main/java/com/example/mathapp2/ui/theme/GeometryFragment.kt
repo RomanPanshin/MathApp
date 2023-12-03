@@ -8,4 +8,13 @@ import android.view.ViewGroup
 import com.example.mathapp2.R
 
 
-class GeometryFragment : Fragment(R.layout.fragment_geometry){}
+class GeometryFragment : Fragment() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_geometry, container, false)
+    }
+}

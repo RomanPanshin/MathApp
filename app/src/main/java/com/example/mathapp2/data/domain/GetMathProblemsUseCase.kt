@@ -1,4 +1,10 @@
 package com.example.mathapp2.data.domain
 
-class GetMathProblemsUseCase {
+import androidx.lifecycle.LiveData
+import com.example.mathapp2.data.DataRepository
+
+class GetMathProblemsUseCase(private val dataRepository: DataRepository) {
+    fun execute(): LiveData<List<String>> {
+        return dataRepository.getMathProblems()
+    }
 }

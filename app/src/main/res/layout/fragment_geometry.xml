@@ -1,3 +1,4 @@
+<!-- Example layout for Geometry -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,6 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Geometry"
+        android:text="Geometry Content"
         android:textSize="24sp" />
+    <!-- Add more views as needed -->
 </LinearLayout>
