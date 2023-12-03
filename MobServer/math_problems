@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "problem": "What is 2 + 2?",
+    "solution": "4"
+  },
+  {
+    "id": 2,
+    "problem": "What is 3 * 4?",
+    "solution": "12"
+  }
+]
