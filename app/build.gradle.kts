@@ -83,6 +83,7 @@ dependencies {
     // Room for local database
     implementation("androidx.room:room-runtime:2.6.0")
     implementation("androidx.room:room-ktx:2.6.0")
+    implementation("com.google.android.material:material:1.4.0")
     kapt("androidx.room:room-compiler:2.6.0") // Annotation processor for Room
 
     // Test dependencies

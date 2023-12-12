@@ -8,12 +8,12 @@
     <application
         android:name=".MyApp"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.MathApp2">
         <activity
-            android:name=".MainActivity2"
+            android:name=".ImageDownloadActivity"
             android:exported="false"
             android:label="@string/title_activity_main2"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/Theme.MathApp2" />
         <activity
             android:name=".DataDisplayActivity"
             android:exported="false"

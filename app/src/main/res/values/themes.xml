@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MathApp2" parent="Theme.AppCompat.Light.DarkActionBar" />
+    <style name="Theme.MathApp2" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Define your theme-specific styles here -->
+    </style>
 
-<!--    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar" />-->
-
-    <!--    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar" />-->
 </resources>
