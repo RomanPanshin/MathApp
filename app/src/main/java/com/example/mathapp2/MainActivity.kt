@@ -2,82 +2,109 @@ package com.example.mathapp2
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.mathapp2.data.db.AppDatabase
 import com.example.mathapp2.data.repository.MathRepository
 import com.example.mathapp2.ui.theme.AlgebraFragment
 import com.example.mathapp2.ui.theme.GeometryFragment
-import com.example.mathapp2.ui.theme.MathApp2Theme
 import com.example.mathapp2.ui.theme.MathBasicsFragment
 import com.example.mathapp2.viewmodel.MyViewModel
 import com.example.mathapp2.viewmodel.MyViewModelFactory
 
-
-class MainActivity : AppCompatActivity() {
-    private lateinit var problemsRecyclerView: RecyclerView
-    private lateinit var adapter: MathProblemsAdapter
-    private lateinit var navController: NavController
+class MainActivity : ComponentActivity() {
     private val viewModel: MyViewModel by viewModels {
         val dao = AppDatabase.getDatabase(application).mathProblemDao()
         val repository = MathRepository(dao)
         MyViewModelFactory(repository)
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+        setContent {
+            val navController = rememberNavController()
+            val currentFragment = remember { mutableStateOf("Unknown") }
 
-        findViewById<Button>(R.id.mathBasicsButton).setOnClickListener {
-            navController.navigate(R.id.mathBasicsFragment)
-        }
-
-        findViewById<Button>(R.id.algebraButton).setOnClickListener {
-            navController.navigate(R.id.algebraFragment)
-        }
-
-        findViewById<Button>(R.id.geometryButton).setOnClickListener {
-            navController.navigate(R.id.geometryFragment)
-        }
-        val navigateToImageDownloadButton: Button = findViewById(R.id.btnNavigateToImageDownload)
-        navigateToImageDownloadButton.setOnClickListener {
-            val intent = Intent(this, ImageDownloadActivity::class.java)
-            startActivity(intent)
-        }
-
-        val fetchDataButton: Button = findViewById(R.id.fetchDataButton)
-        fetchDataButton.setOnClickListener {
-            viewModel.refreshData()
-        }
-        val navigateButton: Button = findViewById(R.id.btnNavigateToDataDisplay)
-        navigateButton.setOnClickListener {
-            val intent = Intent(this, DataDisplayActivity::class.java)
-            startActivity(intent)
+            // Listener for navigation changes
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                currentFragment.value = destination.route ?: "Unknown"
+            }
+            MaterialTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    // Setting up the NavHost
+                    NavHost(navController = navController, startDestination = "mathBasicsFragment") {
+                        composable("mathBasicsFragment") { MathBasicsFragment() }
+                        composable("algebraFragment") { AlgebraFragment() }
+                        composable("geometryFragment") { GeometryFragment() }
+                    }
+                    MathAppScreen(navController, viewModel, this, currentFragment)
+                }
+            }
         }
     }
-
-    private fun setupRecyclerView() {
-        problemsRecyclerView = findViewById(R.id.mathProblemsRecyclerView)
-        adapter = MathProblemsAdapter()
-        problemsRecyclerView.adapter = adapter
-        problemsRecyclerView.layoutManager = LinearLayoutManager(this)
+    inline fun <reified T : ComponentActivity> navigateToActivity() {
+        val intent = Intent(this, T::class.java)
+        startActivity(intent)
     }
 }
+
+
+@Composable
+fun MathAppScreen(navController: NavHostController, viewModel: MyViewModel, activity: MainActivity, currentFragment: MutableState<String>) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Current Fragment: ${currentFragment.value}")
+        Spacer(modifier = Modifier.height(16.dp))
+        NavigationButton(text = "Math Basics", onClick = { navController.navigate("mathBasicsFragment") })
+        Spacer(modifier = Modifier.height(8.dp))
+        NavigationButton(text = "Algebra", onClick = {  navController.navigate("algebraFragment")})
+        Spacer(modifier = Modifier.height(8.dp))
+        NavigationButton(text = "Geometry", onClick = { navController.navigate("geometryFragment") })
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { viewModel.refreshData() }) {
+            Text(text = "Fetch Data")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = { activity.navigateToActivity<ImageDownloadActivity>() }) {
+            Text(text = "Download Image")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = { activity.navigateToActivity<DataDisplayActivity>() }) {
+            Text(text = "Display Data")
+        }
+    }
+}
+
+
+@Composable
+fun NavigationButton(text: String, onClick: () -> Unit) {
+    Button(onClick = onClick) {
+        Text(text = text)
+    }
+}
+
+

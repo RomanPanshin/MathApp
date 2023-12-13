@@ -3,47 +3,49 @@ package com.example.mathapp2
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mathapp2.data.db.AppDatabase
-import com.example.mathapp2.data.db.MathProblemDao
-import com.example.mathapp2.ui.theme.MathApp2Theme
+import com.example.mathapp2.viewmodel.MathProblemsViewModel
+import com.example.mathapp2.viewmodel.MathProblemsViewModelFactory
 
-class DataDisplayActivity : AppCompatActivity() {
-    private lateinit var database: AppDatabase
-    private lateinit var mathProblemDao: MathProblemDao
-    private lateinit var adapter: MathProblemsAdapter
+class DataDisplayActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_data_display)
-
-        database = AppDatabase.getDatabase(this)
-        mathProblemDao = database.mathProblemDao()
-        adapter = MathProblemsAdapter()
-
-        val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
-
-        loadData()
+        setContent {
+            val viewModel: MathProblemsViewModel = viewModel(
+                factory = MathProblemsViewModelFactory(AppDatabase.getDatabase(this).mathProblemDao())
+            )
+            MaterialTheme {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    MathProblemsList(viewModel)
+                }
+            }
+        }
     }
+}
 
-    private fun loadData() {
-        // Observe LiveData from the database
-        mathProblemDao.getAll().observe(this, Observer { problems ->
-            // Assuming MathProblem has a 'problem' property which is a String
-            val problemStrings = problems.map { it.problem }
-            adapter.setProblems(problemStrings)
-        })
+@Composable
+fun MathProblemsList(viewModel: MathProblemsViewModel) {
+    val problems = viewModel.problems.observeAsState(initial = emptyList())
+    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        items(problems.value) { problem ->
+            MathProblemItem(problem)
+        }
     }
+}
+
+@Composable
+fun MathProblemItem(problem: String) {
+    Text(text = problem, modifier = Modifier.fillMaxWidth().padding(8.dp), style = MaterialTheme.typography.bodySmall)
 }

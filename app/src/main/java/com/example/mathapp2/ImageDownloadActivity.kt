@@ -1,86 +1,49 @@
 package com.example.mathapp2
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
-import com.example.mathapp2.R
-import kotlinx.coroutines.*
-import java.io.*
-import java.net.URL
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mathapp2.viewmodel.ImageDownloadViewModel
 
-class ImageDownloadActivity : AppCompatActivity() {
-
-    private lateinit var savedImageView: ImageView
-
+class ImageDownloadActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_image_download)
-
-        savedImageView = findViewById(R.id.savedImageView)
-        val linkEditText = findViewById<EditText>(R.id.linkEditText)
-        val downloadButton = findViewById<Button>(R.id.downloadButton)
-
-        downloadButton.setOnClickListener {
-            val url = linkEditText.text.toString()
-            downloadAndSaveImage(url)
+        setContent {
+            val viewModel: ImageDownloadViewModel = viewModel()
+            ImageDownloadScreen(viewModel)
         }
     }
+}
 
-    private fun downloadAndSaveImage(url: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val image = downloadImage(url)
-            val savedImagePath = saveImageToInternalStorage(image)
+@Composable
+fun ImageDownloadScreen(viewModel: ImageDownloadViewModel) {
+    var imageUrl by remember { mutableStateOf("") }
+    val downloadedImage by viewModel.downloadedImage.collectAsState()
 
-            runOnUiThread {
-                if (savedImagePath != null) {
-                    displayImage(savedImagePath)
-                } else {
-                    // Handle error
-                }
-            }
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.Center) {
+        BasicTextField(
+            value = imageUrl,
+            onValueChange = { imageUrl = it },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = { viewModel.downloadAndSaveImage(imageUrl) }) {
+            Text("Download Image")
         }
-    }
-    private suspend fun downloadImage(urlString: String): Bitmap? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val url = URL(urlString)
-                val connection = url.openConnection()
-                connection.connect()
-                val inputStream = connection.getInputStream()
-                BitmapFactory.decodeStream(inputStream)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
+        Spacer(modifier = Modifier.height(8.dp))
+        downloadedImage?.let { bitmap ->
+            Image(bitmap = bitmap.asImageBitmap(), contentDescription = "Downloaded Image")
         }
-    }
-
-    private fun saveImageToInternalStorage(bitmap: Bitmap?): String? {
-        return try {
-            bitmap?.let {
-                val fileName = "downloaded_image.png"
-                openFileOutput(fileName, MODE_PRIVATE).use { stream ->
-                    if (bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
-                        getFileStreamPath(fileName).absolutePath
-                    } else {
-                        null
-                    }
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-    private fun displayImage(imagePath: String) {
-        val bitmap = BitmapFactory.decodeFile(imagePath)
-        savedImageView.setImageBitmap(bitmap)
-        savedImageView.visibility = View.VISIBLE
     }
 }

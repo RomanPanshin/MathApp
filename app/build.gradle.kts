@@ -86,6 +86,10 @@ dependencies {
     implementation("com.google.android.material:material:1.4.0")
     kapt("androidx.room:room-compiler:2.6.0") // Annotation processor for Room
 
+    implementation("androidx.compose.ui:ui:1.4.3")
+    implementation("androidx.compose.material:material:1.4.3")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
+    implementation("androidx.navigation:navigation-compose:2.4.0") // For navigation
     // Test dependencies
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -93,5 +97,10 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-manifest")
 // Koin for Android
     implementation("io.insert-koin:koin-android:3.1.2")
+
+    implementation("androidx.compose.runtime:runtime-livedata")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx")
+    implementation("androidx.lifecycle:lifecycle-extensions")
+
 
 }
