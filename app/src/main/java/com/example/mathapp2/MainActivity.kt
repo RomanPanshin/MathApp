@@ -6,6 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.Scaffold
+import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -41,23 +44,37 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val currentFragment = remember { mutableStateOf("Unknown") }
-
-            // Listener for navigation changes
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 currentFragment.value = destination.route ?: "Unknown"
             }
-            MaterialTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    // Setting up the NavHost
+            Scaffold(
+                topBar = {
+                    TopAppBar(title = { Text("Main Activity") }) // Static title
+                },
+                bottomBar = {
+                    BottomAppBar {
+                        Button(onClick = { navigateToActivity<MainActivity>() }) {
+                            Text(text = "Main Activity")
+                        }
+//                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { navigateToActivity<ImageDownloadActivity>() }) {
+                            Text(text = "Download Image")
+                        }
+//                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { navigateToActivity<DataDisplayActivity>() }) {
+                            Text(text = "Display Data")
+                        }
+                    }
+                }
+                // drawerContent parameter removed as it's not supported here
+            ) { innerPadding ->
+                Box(modifier = Modifier.padding(innerPadding)) {
                     NavHost(navController = navController, startDestination = "mathBasicsFragment") {
                         composable("mathBasicsFragment") { MathBasicsFragment() }
                         composable("algebraFragment") { AlgebraFragment() }
                         composable("geometryFragment") { GeometryFragment() }
                     }
-                    MathAppScreen(navController, viewModel, this, currentFragment)
+                    MathAppScreen(navController, viewModel, this@MainActivity, currentFragment)
                 }
             }
         }
@@ -87,14 +104,6 @@ fun MathAppScreen(navController: NavHostController, viewModel: MyViewModel, acti
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = { viewModel.refreshData() }) {
             Text(text = "Fetch Data")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = { activity.navigateToActivity<ImageDownloadActivity>() }) {
-            Text(text = "Download Image")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = { activity.navigateToActivity<DataDisplayActivity>() }) {
-            Text(text = "Display Data")
         }
     }
 }

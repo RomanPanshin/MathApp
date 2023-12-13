@@ -1,11 +1,16 @@
 package com.example.mathapp2
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.Scaffold
+import androidx.compose.material.TopAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,12 +31,41 @@ class DataDisplayActivity : ComponentActivity() {
             val viewModel: MathProblemsViewModel = viewModel(
                 factory = MathProblemsViewModelFactory(AppDatabase.getDatabase(this).mathProblemDao())
             )
-            MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    MathProblemsList(viewModel)
+            Scaffold(
+                topBar = {
+                    TopAppBar(title = { Text("Display Activity") }) // Static title
+                },
+                bottomBar = {
+                    BottomAppBar {
+                        Button(onClick = { navigateToActivity<MainActivity>() }) {
+                            Text(text = "Main Activity")
+                        }
+//                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { navigateToActivity<ImageDownloadActivity>() }) {
+                            Text(text = "Download Image")
+                        }
+//                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { navigateToActivity<DataDisplayActivity>() }) {
+                            Text(text = "Display Data")
+                        }
+                    }
+                }
+                // drawerContent parameter removed as it's not supported here
+            ) {
+                MaterialTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        MathProblemsList(viewModel)
+                    }
                 }
             }
         }
+    }
+    inline fun <reified T : ComponentActivity> navigateToActivity() {
+        val intent = Intent(this, T::class.java)
+        startActivity(intent)
     }
 }
 
