@@ -7,11 +7,29 @@ import androidx.lifecycle.viewModelScope
 import com.example.mathapp2.data.db.MathProblemDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.example.mathapp2.data.repository.MathRepository
 
 class MathProblemsViewModel(private val mathProblemDao: MathProblemDao) : ViewModel() {
-
     private val _problems = MutableLiveData<List<String>>()
     val problems: LiveData<List<String>> get() = _problems
+    private val repository =  MathRepository(mathProblemDao)
+
+    fun refreshData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // Update the list of math problems
+                repository.refreshData()
+                val mathProblems = mathProblemDao.getAll()
+                mathProblems.observeForever { problemsList ->
+                    val problemStrings = problemsList.map { it.problem }
+                    _problems.postValue(problemStrings)
+                }
+
+            } catch (e: Exception) {
+                // Handle exceptions
+            }
+        }
+    }
 
     init {
         loadMathProblems()
@@ -26,4 +44,5 @@ class MathProblemsViewModel(private val mathProblemDao: MathProblemDao) : ViewMo
             }
         }
     }
+
 }

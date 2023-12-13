@@ -51,21 +51,7 @@ class MainActivity : ComponentActivity() {
                 topBar = {
                     TopAppBar(title = { Text("Main Activity") }) // Static title
                 },
-                bottomBar = {
-                    BottomAppBar {
-                        Button(onClick = { navigateToActivity<MainActivity>() }) {
-                            Text(text = "Main Activity")
-                        }
-//                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(onClick = { navigateToActivity<ImageDownloadActivity>() }) {
-                            Text(text = "Download Image")
-                        }
-//                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(onClick = { navigateToActivity<DataDisplayActivity>() }) {
-                            Text(text = "Display Data")
-                        }
-                    }
-                }
+                bottomBar = { BottomAppBarContent() }
                 // drawerContent parameter removed as it's not supported here
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
@@ -76,6 +62,20 @@ class MainActivity : ComponentActivity() {
                     }
                     MathAppScreen(navController, viewModel, this@MainActivity, currentFragment)
                 }
+            }
+        }
+    }
+    @Composable
+    fun BottomAppBarContent() {
+        BottomAppBar {
+            androidx.compose.material.Button(onClick = { navigateToActivity<MainActivity>() }) {
+                androidx.compose.material.Text(text = "Main Activity")
+            }
+            androidx.compose.material.Button(onClick = { navigateToActivity<ImageDownloadActivity>() }) {
+                androidx.compose.material.Text(text = "Download Image")
+            }
+            androidx.compose.material.Button(onClick = {  navigateToActivity<DataDisplayActivity>()}) {
+                androidx.compose.material.Text(text = "Display Data")
             }
         }
     }
@@ -102,9 +102,6 @@ fun MathAppScreen(navController: NavHostController, viewModel: MyViewModel, acti
         Spacer(modifier = Modifier.height(8.dp))
         NavigationButton(text = "Geometry", onClick = { navController.navigate("geometryFragment") })
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { viewModel.refreshData() }) {
-            Text(text = "Fetch Data")
-        }
     }
 }
 

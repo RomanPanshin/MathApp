@@ -18,37 +18,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.mathapp2.viewmodel.ImageDownloadViewModel
+import com.example.mathapp2.work.MathProblemsUpdateWorker
 
 class ImageDownloadActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val viewModel: ImageDownloadViewModel = viewModel()
+            Button(onClick = { triggerMathProblemsUpdate() }) {
+                Text("Update Math Problems")
+            }
             Scaffold(
                 topBar = {
                     TopAppBar(title = { Text("Download Activity") }) // Static title
                 },
-                bottomBar = {
-                    BottomAppBar {
-                        Button(onClick = { navigateToActivity<MainActivity>() }) {
-                            Text(text = "Main Activity")
-                        }
-//                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(onClick = { navigateToActivity<ImageDownloadActivity>() }) {
-                            Text(text = "Download Image")
-                        }
-//                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(onClick = { navigateToActivity<DataDisplayActivity>() }) {
-                            Text(text = "Display Data")
-                        }
-                    }
-                }
+                bottomBar = { BottomAppBarContent() }
                 // drawerContent parameter removed as it's not supported here
             ){
                 ImageDownloadScreen(viewModel)
             }
+
         }
+    }
+    @Composable
+    fun BottomAppBarContent() {
+        BottomAppBar {
+            androidx.compose.material.Button(onClick = { navigateToActivity<MainActivity>() }) {
+                androidx.compose.material.Text(text = "Main Activity")
+            }
+            androidx.compose.material.Button(onClick = { navigateToActivity<ImageDownloadActivity>() }) {
+                androidx.compose.material.Text(text = "Download Image")
+            }
+            androidx.compose.material.Button(onClick = {  navigateToActivity<DataDisplayActivity>()}) {
+                androidx.compose.material.Text(text = "Display Data")
+            }
+        }
+    }
+    private fun triggerMathProblemsUpdate() {
+        val workRequest = OneTimeWorkRequestBuilder<MathProblemsUpdateWorker>().build()
+        WorkManager.getInstance(this).enqueue(workRequest)
     }
     inline fun <reified T : ComponentActivity> navigateToActivity() {
         val intent = Intent(this, T::class.java)

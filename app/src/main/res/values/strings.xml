@@ -4,4 +4,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_data_display">DataDisplayActivity</string>
     <string name="title_activity_main2">MainActivity2</string>
+    <string name="geometry_image">Geometry</string>
+    <string name="algebraI_image">algebra \n</string>
+    <string name="mathBasics_image">Math Basics</string>
 </resources>
